@@ -17,8 +17,8 @@ public class CalculatorController {
         this.calculatorService = calculatorService;
     }
 
-    @GetMapping("/add")
-    public int addTwoNumbers(CalculatorAddRequest request) {
+    @PostMapping("/add")
+    public int addTwoNumbers(@RequestBody CalculatorAddRequest request) {
         return calculatorService.add(request.getNumber1(), request.getNumber2());
     }
 
