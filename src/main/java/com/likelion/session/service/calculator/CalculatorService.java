@@ -15,4 +15,11 @@ public class CalculatorService {
         return number1 - number2;
     }
 
+    public int divide(int number1, int number2) {
+        if (number2 == 0) {
+            throw new ArithmeticException("0으로는 나눌 수 없습니다.");
+        }
+        return number1 / number2;
+    }
+
 }
