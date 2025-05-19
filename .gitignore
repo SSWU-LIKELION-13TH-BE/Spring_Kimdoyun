@@ -47,3 +47,4 @@ out/
 build/
 .gradle/
 target/
+src/main/resources/application.yml
