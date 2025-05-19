@@ -41,4 +41,11 @@ public class S3Service {
 
         return s3Client.utilities().getUrl(request).toString(); // 업로드된 파일 주소 리턴
     }
+    public String getImageUrl(String fileName) {
+        GetUrlRequest request = GetUrlRequest.builder()
+                .bucket(bucket)
+                .key(fileName)
+                .build();
+        return s3Client.utilities().getUrl(request).toString();
+    }
 }

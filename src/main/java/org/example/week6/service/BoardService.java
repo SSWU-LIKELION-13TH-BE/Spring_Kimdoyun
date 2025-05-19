@@ -65,4 +65,16 @@ public class BoardService {
 
     }
 
+    @Transactional
+    public String getImageUrl(Long boardId) {
+        Board board = boardRepository.findByBoardId(boardId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 게시물입니다."));
+
+        String fileName = board.getImage();
+        return s3Service.getImageUrl(fileName);
+    }
+
+
+
+
 }

@@ -7,6 +7,7 @@ import org.example.week6.entity.Board;
 import org.example.week6.service.S3Service;
 
 import org.example.week6.service.BoardService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,6 +64,16 @@ public class BoardController {
         } catch (Exception e) {
             log.error("파일 업로드 실패", e);
             return ResponseEntity.status(400).build();
+        }
+    }
+
+    @GetMapping("/{boardId}/image")
+    public ResponseEntity<String> getImageUrl(@PathVariable Long boardId) {
+        try {
+            String imageUrl = boardService.getImageUrl(boardId);
+            return ResponseEntity.ok(imageUrl);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 }
