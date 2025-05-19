@@ -41,12 +41,6 @@ public class BoardService {
                 boardRepository.save(board);
     }
 
-    @Transactional
-    public void deleteBoard(Long boardId) {
-        boardRepository.deleteByBoardId(boardId);
-    }
-
-
 
     @Transactional
     //이미지 포함 게시글 생성
@@ -74,7 +68,17 @@ public class BoardService {
         return s3Service.getImageUrl(fileName);
     }
 
+    @Transactional
+    // 일반 게시물 삭제와 사진 게시물 삭제를 하나로 합쳤다
+    public void deleteBoard(Long boardId) {
+        Board board = boardRepository.findByBoardId(boardId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 게시물입니다."));
 
+        if(board.getImage() != null && !board.getImage().isEmpty()) {
+            s3Service.deleteFile(board.getImage());
+        }
 
+        boardRepository.deleteByBoardId(boardId);
+    }
 
 }
