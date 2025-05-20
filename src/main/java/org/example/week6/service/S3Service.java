@@ -51,11 +51,27 @@ public class S3Service {
         return s3Client.utilities().getUrl(request).toString();
     }
 
-    public void deleteFile(String fileName) {
+    //url에서 키만 추출하는 함수
+    public String extractKeyFromUrl(String fullUrl) {
+        if (fullUrl == null || !fullUrl.startsWith("https://")) {
+            return fullUrl;
+        }
+
+        return fullUrl.substring(fullUrl.indexOf(".com/") + 5);
+    }
+
+    public void deleteFile(String fullUrl) {
+
+        if (fullUrl == null || fullUrl.isEmpty()) {
+            return;  // 예외 방지
+        }
+
+        String key = extractKeyFromUrl(fullUrl);
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucket)
-                .key(fileName)
+                .key(key)
                 .build();
         s3Client.deleteObject(deleteObjectRequest);
+
     }
 }
