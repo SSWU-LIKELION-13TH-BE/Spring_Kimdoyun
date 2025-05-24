@@ -56,4 +56,9 @@ public class UserService implements UserDetailsService {
                 .authorities("USER")
                 .build();
     }
+
+    public User findUserByUserId(String userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + userId));
+    }
 }
