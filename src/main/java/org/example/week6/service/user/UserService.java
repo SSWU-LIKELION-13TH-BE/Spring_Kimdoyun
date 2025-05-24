@@ -2,6 +2,7 @@ package org.example.week6.service.user;
 
 import org.example.week6.dto.user.UserLoginRequestDto;
 import org.example.week6.dto.user.UserLoginResponseDto;
+import org.example.week6.dto.user.UserPasswordChangeRequestDto;
 import org.example.week6.dto.user.UserSignupRequestDto;
 import org.example.week6.entity.user.User;
 import org.example.week6.repository.user.UserRepository;
@@ -60,5 +61,22 @@ public class UserService implements UserDetailsService {
     public User findUserByUserId(String userId) {
         return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + userId));
+    }
+
+    public void changePassword(String userId, UserPasswordChangeRequestDto requestDto) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + userId));
+
+        if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        if (!requestDto.getNewPassword().equals(requestDto.getConfirmPassword())) {
+            throw new IllegalArgumentException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+        }
+
+        user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+        userRepository.save(user);
+
     }
 }
