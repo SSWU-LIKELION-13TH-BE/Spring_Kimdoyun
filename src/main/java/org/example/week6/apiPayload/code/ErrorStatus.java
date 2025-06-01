@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorStatus implements BaseErrorCode {
     _BAD_REQUEST(HttpStatus.BAD_REQUEST,"COMMON400","잘못된 요청 입니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER4001","해당 사용자가 없습니다."),
-    TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트용 예외입니다.");
+    TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트용 예외입니다."),
+    USERNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4001", "이미 존재하는 아이디입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
