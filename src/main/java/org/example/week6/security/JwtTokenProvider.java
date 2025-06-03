@@ -60,4 +60,12 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
+    public String extractUserIdIfValid(HttpServletRequest request) {
+        String token = resolveToken(request);
+        if (token != null || !validateToken(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+        return getUserId(token);
+    }
 }

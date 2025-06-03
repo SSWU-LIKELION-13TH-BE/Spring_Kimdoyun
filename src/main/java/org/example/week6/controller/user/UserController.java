@@ -40,34 +40,27 @@ public class UserController {
     // ✅ 사용자 조회
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo(HttpServletRequest request) { // HttpServletRequest : 헤더에서 Jwt 토큰 꺼냄
-        String token = jwtTokenProvider.resolveToken(request);
-        if (token == null || !jwtTokenProvider.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+        try {
+            String userId = jwtTokenProvider.extractUserIdIfValid(request);
+            User user = userService.findUserByUserId(userId);
+
+            UserMeResponseDto responseDto = new UserMeResponseDto(
+                    user.getUserId(),
+                    user.getName(),
+                    user.getProfileImage()
+            );
+
+            return ResponseEntity.ok(responseDto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
-
-        String userId = jwtTokenProvider.getUserId(token);
-        User user = userService.findUserByUserId(userId);
-
-        UserMeResponseDto responseDto = new UserMeResponseDto(
-                user.getUserId(),
-                user.getName(),
-                user.getProfileImage()
-        );
-
-        return ResponseEntity.ok(responseDto);
-
     }
 
     @PatchMapping("/password")
     public ResponseEntity<?> changePassword(@Valid @RequestBody UserPasswordChangeRequestDto requestDto, HttpServletRequest request) {
-        String token = jwtTokenProvider.resolveToken(request);
-        if (token==null||!jwtTokenProvider.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.onFailure("AUTH401", "유효하지 않은 토큰입니다.", null));
-        }
-
-        String userId = jwtTokenProvider.getUserId(token);
         try {
+            String userId = jwtTokenProvider.extractUserIdIfValid(request);
+
             userService.changePassword(userId, requestDto);
             return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, "비밀번호가 변경되었습니다."));
         } catch (IllegalArgumentException e) {
